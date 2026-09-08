@@ -1,0 +1,29 @@
+services:
+  # Frontend — Static Site. Es lo único imprescindible para que
+  # Marta pueda abrir la experiencia.
+  - type: web
+    name: marta-experience-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  # Backend — opcional. Solo hace falta si en el futuro quieres que
+  # el contenido se sirva desde una API en vez de vivir en el
+  # frontend. Hoy la web funciona sin este servicio.
+  - type: web
+    name: marta-experience-backend
+    runtime: java
+    rootDir: backend
+    buildCommand: mvn -q -DskipTests package
+    startCommand: java -jar target/marta-experience.jar
+    envVars:
+      - key: CORS_ALLOWED_ORIGIN
+        value: https://marta-experience-frontend.onrender.com
